@@ -1,6 +1,6 @@
 # Sales DWH Pipeline
 
-A portfolio data warehouse pipeline built on the [Brazilian E-Commerce dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (Kaggle).
+A data warehouse pipeline built on the [Brazilian E-Commerce dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (Kaggle).
 
 Demonstrates end-to-end ETL with Airflow, PostgreSQL, Docker, and SQL window functions.
 
@@ -19,7 +19,7 @@ staging schema      — typed columns, deduplication, NULL handling
 mart schema         — business-ready aggregations with window functions
 ```
 
-**DAG chain (auto-triggered):**
+**DAG chain:**
 ```
 ingest_raw  →  transform_staging  →  build_marts
 ```
@@ -54,35 +54,4 @@ docker compose up -d
 
 # 3. Trigger the pipeline — runs all three DAGs in sequence
 airflow dags trigger ingest_raw
-```
-
-**Data source:** Download from Kaggle → [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) and place all CSV files into `data/`.
-
-## Project structure
-
-```
-dags/
-  ingest_raw.py          — loads CSVs into raw schema
-  transform_staging.py   — cleans and types raw data
-  build_marts.py         — builds business mart tables
-sql/
-  raw/
-    create_raw_tables.sql
-  staging/
-    create_staging_tables.sql
-    stg_orders.sql
-    stg_order_items.sql
-    stg_customers.sql
-    stg_sellers.sql
-    stg_products.sql
-    stg_order_payments.sql
-    stg_order_reviews.sql
-  mart/
-    create_mart_tables.sql
-    mart_revenue.sql
-    mart_top_sellers.sql
-    mart_retention.sql
-scripts/
-  init_db.sh             — creates sales_dwh DB and user on first start
-docker-compose.yml
 ```
