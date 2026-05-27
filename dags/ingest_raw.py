@@ -3,6 +3,7 @@ import os
 import pandas as pd
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
@@ -53,4 +54,9 @@ with DAG(
         for csv_file, table_name in CSV_TO_TABLE.items()
     ]
 
-    create_schema >> load_tasks
+    trigger_staging = TriggerDagRunOperator(
+        task_id="trigger_transform_staging",
+        trigger_dag_id="transform_staging",
+    )
+
+    create_schema >> load_tasks >> trigger_staging
