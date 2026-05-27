@@ -1,5 +1,6 @@
 from datetime import datetime
 from airflow import DAG
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 STAGING_TABLES = [
@@ -36,4 +37,9 @@ with DAG(
         for table in STAGING_TABLES
     ]
 
-    create_schema >> transform_tasks
+    trigger_marts = TriggerDagRunOperator(
+        task_id="trigger_build_marts",
+        trigger_dag_id="build_marts",
+    )
+
+    create_schema >> transform_tasks >> trigger_marts
